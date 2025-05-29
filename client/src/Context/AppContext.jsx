@@ -1,22 +1,72 @@
-import { createContext,  useContext } from "react";
+import { createContext, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import React, { useState } from "react";
-
+import React, { useState, useEffect } from "react";
+import {dummyProducts} from "../assets/assets";
+import toast from "react-hot-toast";
 
 export const AppContext = createContext();
 
 export const AppContextProvider = ({ children }) => {
-    // Define any state or functions you want to provide to the context
+  // Define any state or functions you want to provide to the context
+  const currency = import.meta.env.VITE_CURRENCY;
 
-    const navigate = useNavigate();
-    const [ user, setUser ] = useState(null);
-    const [ isAuthenticated, setIsAuthenticated ] = useState(false);
-    const [ isLoading, setIsLoading ] = useState(true);
-    const [ error, setError ] = useState(null);
-    const [ isDarkMode, setIsDarkMode ] = useState(false);
-    const [ isMobile, setIsMobile ] = useState(false);
-    const [showUserLogin, setShowUserLogin] = useState(false);
+  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [showUserLogin, setShowUserLogin] = useState(false);
+  const [products, setProducts] = useState([]);
 
+  const [cartItems, setCartItems] = useState([]);
+
+  const fetchProducts = async () => {
+    setProducts(dummyProducts);
+  };
+
+  const addToCart = (itemId) => {
+    let cartData = structuredClone(cartItems);
+
+    if(cartData[itemId]){
+      cartData[itemId] += 1;
+    }
+    else {
+      cartData[itemId] = 1;
+    }
+    setCartItems(cartData);
+    toast.success("Item added to cart");
+  }
+
+  const removeFromCart = (itemId) => {
+    let cartData = structuredClone(cartItems);
+    if(cartData[itemId]){
+      cartData[itemId] -= 1;
+      if(cartData[itemId] === 0){
+        delete cartData[itemId];
+        toast.success("Item removed from cart");
+      } 
+    }
+    toast.success("Item removed from cart");
+    setCartItems(cartData);
+  }
+
+  const updateCartItem = (itemId, quantity) => {
+    let cartData = structuredClone(cartItems);
+
+    cartData[itemId] = quantity;
+    setCartItems(cartData);
+    toast.success("Cart item updated");
+  }
+
+
+        
+  
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
   const contextValue = {
     user,
@@ -33,20 +83,24 @@ export const AppContextProvider = ({ children }) => {
     setIsMobile,
     navigate,
     showUserLogin,
-    setShowUserLogin
+    setShowUserLogin,
+    currency,
+    addToCart,
+    updateCartItem,
+    removeFromCart,
+    cartItems,
+    products,
   };
 
   return (
-    <AppContext.Provider value={contextValue}>
-      {children}
-    </AppContext.Provider>
+    <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>
   );
-}
+};
 
 export const useAppContext = () => {
-    const context = useContext(AppContext);
-    if (!context) {
-        throw new Error("useAppContext must be used within an AppContextProvider");
-    }
-    return useContext(AppContext);
-    }
+  const context = useContext(AppContext);
+  if (!context) {
+    throw new Error("useAppContext must be used within an AppContextProvider");
+  }
+  return useContext(AppContext);
+};
