@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { assets } from "../assets/assets";
 import { useAppContext } from "../Context/AppContext";
 
 const Navbar = () => {
   const [open, setOpen] = React.useState(false);
-  const { user, setUser, setShowUserLogin, navigate } = useAppContext();
+  const { user, setUser, setShowUserLogin, navigate, setSearchQuery, searchQuery } = useAppContext();
 
   const Logout = async () => {
     setUser(null);
@@ -13,6 +13,13 @@ const Navbar = () => {
 
     navigate("/");
   };
+
+  useEffect(() => {
+    if (searchQuery.length > 0) {
+      navigate("/products")
+    }
+  }, [searchQuery]);
+
 
   return (
     <div>
@@ -28,6 +35,8 @@ const Navbar = () => {
 
               <div className="hidden lg:flex items-center text-sm gap-2 border border-gray-300 px-3 rounded-full">
                 <input
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  // value={SearchQuery}
                   className="py-1.5 w-full bg-transparent outline-none placeholder-gray-500"
                   type="text"
                   placeholder="Search products"
@@ -53,7 +62,12 @@ const Navbar = () => {
               </div>
 
               {!user ? (
-                <button className="cursor-pointer px-8 py-2 bg-primary hover:bg-primary-dull transition text-white rounded-full">
+                <button onClick={
+                  () => {
+                    setShowUserLogin(true);
+                    setOpen(false);
+                  }
+                } className="cursor-pointer px-8 py-2 bg-primary hover:bg-primary-dull transition text-white rounded-full">
                   Login
                 </button>
               ) : (
