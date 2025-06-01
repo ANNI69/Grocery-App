@@ -63,6 +63,29 @@ export const AppContextProvider = ({ children }) => {
     toast.success("Cart item updated");
   }
 
+  const getCartCount = () => {
+    let count = 0;
+    for (const key in cartItems) {
+      if (Object.hasOwnProperty.call(cartItems, key)) {
+        count += cartItems[key];
+      }
+    }
+    return count;
+  }
+
+  const getCartTotalAmount = () => {
+    let total = 0;
+    for (const key in cartItems) {
+      if (Object.hasOwnProperty.call(cartItems, key)) {
+        const product = products.find((item) => item._id === key);
+        if (product) {
+          total += product.offerPrice * cartItems[key];
+        }
+      }
+    }
+    return Math.round(total * 100) / 100; // Round to 2 decimal places
+  }
+
 
         
   
@@ -95,6 +118,8 @@ export const AppContextProvider = ({ children }) => {
     products,
     searchQuery,
     setSearchQuery,
+    getCartCount,
+    getCartTotalAmount
   };
 
   return (

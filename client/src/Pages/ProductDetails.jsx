@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAppContext } from "../Context/AppContext";
 import { Link, useParams } from "react-router-dom";
 import { assets } from "../assets/assets";
+import Card from "../Components/ProductCard";
 
 const ProductDetails = () => {
   const [thumbnail, setThumbnail] = useState("");
@@ -133,6 +134,23 @@ const ProductDetails = () => {
                 Buy now
               </button>
             </div>
+          </div>
+        </div>
+        <div className="flex flex-col items-center mt-12">
+          <div className="flex flex-col items-center w-max">
+            <p className="text-3xl font-medium" >Related Products</p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-6">
+                {
+                  relatedProducts.filter((product) => product.inStock).map((product, index) => (
+                    <Card key={index} product={product} />
+                  ))
+                }
+            </div>
+            <button
+              onClick={() => navigate("/products")}
+              className="mt-6 px-4 py-2 bg-primary text-white rounded hover:bg-primary-dull transition">
+              View All Products
+              </button>
           </div>
         </div>
       </div>
