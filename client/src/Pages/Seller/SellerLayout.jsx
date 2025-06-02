@@ -1,6 +1,7 @@
+/* eslint-disable no-unused-vars */
 import { Link, Outlet, NavLink } from "react-router-dom";
 import { assets } from "../../assets/assets";
-import { useAppContext } from "../../context/appContext";
+import { useAppContext } from "../../Context/AppContext";
 
 const SellerLayout = () => {
   const { isSeller, setIsSeller } = useAppContext();

@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useAppContext } from '../../Context/AppContext';
-import { assets } from '../../assets/assets';
 const ProductList = () => {
 
   const { products, currency } = useAppContext();
