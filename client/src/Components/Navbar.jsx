@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { assets } from "../assets/assets";
@@ -97,7 +98,7 @@ const Navbar = () => {
                     <span className="text-sm">{user.name}</span>
                   </li>
                   <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                    <NavLink to={"/orders"}>My Orders</NavLink>
+                    <NavLink to={"/my-orders"}>My Orders</NavLink>
                   </li>
                   <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
                     <button
@@ -156,7 +157,7 @@ const Navbar = () => {
             </NavLink>
 
             {user && (
-              <NavLink to={"/orders"} onClick={() => setOpen(false)}>
+              <NavLink to={"/my-orders"} onClick={() => setOpen(false)}>
                 My Orders
               </NavLink>
             )}

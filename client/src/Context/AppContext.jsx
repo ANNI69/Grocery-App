@@ -19,6 +19,7 @@ export const AppContextProvider = ({ children }) => {
   const [isMobile, setIsMobile] = useState(false);
   const [showUserLogin, setShowUserLogin] = useState(false);
   const [products, setProducts] = useState([]);
+  const [isSeller, setIsSeller] = useState(false);
 
 
   const [cartItems, setCartItems] = useState([]);
@@ -119,7 +120,9 @@ export const AppContextProvider = ({ children }) => {
     searchQuery,
     setSearchQuery,
     getCartCount,
-    getCartTotalAmount
+    getCartTotalAmount,
+    isSeller,
+    setIsSeller,
   };
 
   return (

@@ -9,3 +9,7 @@
     --color-primary: #22c55e; /* green-500 */
     --color-primary-dull: #bbf7d0; /* green-200 */
 }
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}

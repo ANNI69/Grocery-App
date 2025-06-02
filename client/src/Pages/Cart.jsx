@@ -180,7 +180,7 @@ const Cart = () => {
                     navigate("/add-address");
                     scrollTo(0, 0);
                   }}
-                  className="text-primary text-center cursor-pointer p-2 hover:bg-primary"
+                  className="text-primary text-center cursor-pointer p-2 hover:bg-primary hover:text-white"
                 >
                   Add address
                 </p>
