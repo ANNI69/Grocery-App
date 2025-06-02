@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useAppContext } from "../../context/appContext";
+import { useAppContext } from "../../Context/AppContext";
 
 const SellerLogin = () => {
   const { isSeller, setIsSeller, navigate } = useAppContext();
