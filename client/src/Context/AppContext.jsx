@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import {dummyProducts} from "../assets/assets";
 import toast from "react-hot-toast";
 import axios from "axios";
+import Cookies from 'js-cookie';
 
 axios.defaults.withCredentials = true;
 axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL ;
@@ -15,8 +16,12 @@ export const AppContextProvider = ({ children }) => {
   const currency = import.meta.env.VITE_CURRENCY;
 
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState(() => {
+    // Initialize user state from cookie if available
+    const userData = Cookies.get('userData');
+    return userData ? JSON.parse(userData) : null;
+  });
+  const [isAuthenticated, setIsAuthenticated] = useState(!!user);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -37,12 +42,14 @@ export const AppContextProvider = ({ children }) => {
     }
   };
 
-  const [cartItems, setCartItems] = useState([]);
+  const [cartItems, setCartItems] = useState(() => {
+    // Initialize cart items from localStorage if available
+    const savedCart = localStorage.getItem('cartItems');
+    return savedCart ? JSON.parse(savedCart) : {};
+  });
   const [searchQuery, setSearchQuery] = useState([]);
 
-
-  const fetchProducts = async () => {
-    setProducts(dummyProducts);
+  const fetchProducts = async () => {setProducts(dummyProducts);
   };
 
   const addToCart = (itemId) => {
@@ -55,6 +62,8 @@ export const AppContextProvider = ({ children }) => {
       cartData[itemId] = 1;
     }
     setCartItems(cartData);
+    // Save to localStorage
+    localStorage.setItem('cartItems', JSON.stringify(cartData));
     toast.success("Item added to cart");
   }
 
@@ -69,6 +78,8 @@ export const AppContextProvider = ({ children }) => {
     }
     toast.success("Item removed from cart");
     setCartItems(cartData);
+    // Save to localStorage
+    localStorage.setItem('cartItems', JSON.stringify(cartData));
   }
 
   const updateCartItem = (itemId, quantity) => {
@@ -76,6 +87,8 @@ export const AppContextProvider = ({ children }) => {
 
     cartData[itemId] = quantity;
     setCartItems(cartData);
+    // Save to localStorage
+    localStorage.setItem('cartItems', JSON.stringify(cartData));
     toast.success("Cart item updated");
   }
 

@@ -1,11 +1,12 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect } from "react";
+import React, { useEffect, useState} from "react";
 import { NavLink } from "react-router-dom";
 import { assets } from "../assets/assets";
 import { useAppContext } from "../Context/AppContext";
+import Cookies from 'js-cookie';
 
 const Navbar = () => {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const {
     user,
     setUser,
@@ -15,13 +16,13 @@ const Navbar = () => {
     searchQuery,
     getCartTotalAmount,
     getCartCount,
-    
   } = useAppContext();
 
   const Logout = async () => {
+    // Remove user data from cookie
+    Cookies.remove('userData');
     setUser(null);
     setShowUserLogin(false);
-
     navigate("/");
   };
 
@@ -176,7 +177,6 @@ const Navbar = () => {
               </button>
             ) : (
               <NavLink
-                to={"/login"}
                 onClick={() => {
                   setOpen(false);
                   setShowUserLogin(true);

@@ -1,5 +1,5 @@
 import Order from "../models/Order.js";
-
+import Product from "../models/Product.js";
 
 export const placeOrderCOD = async (req, res) => {
     try {
@@ -7,37 +7,36 @@ export const placeOrderCOD = async (req, res) => {
     
         // Validate required fields
         if (!userId || !items || !amount || !address || !paymentType) {
-        return res.status(400).json({ message: "All fields are required" });
+            return res.status(400).json({ 
+                success: false,
+                message: "All fields are required" 
+            });
         }
     
         // Create a new order
-        const newOrder = {
-        user: userId,
-        items,
-        amount,
-        address,
-        paymentType,
-        isPaid: false, // COD orders are not paid immediately
-        };
-    
-        let amountToPay = await items.reduce(async (total, item) => {
-            const product = await Product.findById(item.product);
-            return total + (product.Offerprice * item.quantity);
-        }, 0);
-
-        amountToPay += Math.ceil(amountToPay * 0.05); // Adding 5% service charge
-        await Order.create({
+        const order = await Order.create({
             user: userId,
             items,
-            amount: amountToPay,
+            amount,
             address,
             paymentType,
             isPaid: false, // COD orders are not paid immediately
+            status: "Order Placed"
         });
-        res.status(201).json({ message: "Order placed successfully", order: newOrder });
+
+        res.status(201).json({ 
+            success: true,
+            message: "Order placed successfully", 
+            order 
+        });
     }
     catch (error) {
-        res.status(500).json({ message: "Error placing order", error: error.message });
+        console.error("Error placing order:", error);
+        res.status(500).json({ 
+            success: false,
+            message: "Error placing order", 
+            error: error.message 
+        });
     }
 }
 

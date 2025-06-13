@@ -2,6 +2,8 @@
 import React, { useEffect, useState } from "react";
 import { useAppContext } from "../Context/AppContext";
 import { assets, dummyAddress } from "../assets/assets";
+import toast from "react-hot-toast";
+import axios from "axios";
 
 const Cart = () => {
   const [showAddress, setShowAddress] = useState(false);
@@ -14,6 +16,9 @@ const Cart = () => {
     getCartCount,
     removeFromCart,
     updateCartItem,
+    asios,
+    user,
+    setCart
   } = useAppContext();
 
   const [cartArray, setCartArray] = useState([]);
@@ -37,6 +42,53 @@ const Cart = () => {
       }
     }
     setCartArray(cart);
+  };
+
+  const placeOrder = async () => {
+    try {
+      if (!selectedAddress) {
+        return toast.error("Please select a delivery address");
+      }
+      if (getCartCount() === 0) {
+        return toast.error("Your cart is empty!");
+      }
+      if (!user?._id) {
+        return toast.error("Please login to place order");
+      }
+
+      if (paymentMethod === "COD") {
+        const orderData = {
+          userId: user._id,
+          items: cartArray.map(item => ({
+            product: item._id,
+            quantity: item.quantity
+          })),
+          address: selectedAddress._id,
+          amount: Math.round((getCartTotalAmount() * 1.02 + 20) * 100) / 100,
+          paymentType: "COD"
+        };
+
+        console.log('Order Data:', orderData); // Debug log
+
+        const { data } = await axios.post('/api/order/cod', orderData);
+
+        if (data.success) {
+          toast.success(data.message);
+          // Clear cart from localStorage and state
+          localStorage.removeItem('cartItems');
+          setCart({});
+          navigate('/my-orders');
+        } else {
+          toast.error(data.message);
+        }
+      } else {
+        // Handle online payment
+        navigate("/payment");
+      }
+    } catch (error) {
+      console.error('Order Error:', error.response?.data || error); // Debug log
+      toast.error(error.response?.data?.message || "Failed to place order");
+    }
   };
 
   useEffect(() => {
@@ -213,7 +265,7 @@ const Cart = () => {
             <span>Tax (2%)</span>
             <span>{currency}{
               Math.round(getCartTotalAmount() * 0.02 * 100) / 100
-              }</span>
+            }</span>
           </p>
           <p className="flex justify-between text-lg font-medium mt-3">
             <span>Total Amount:
@@ -229,24 +281,8 @@ const Cart = () => {
         </div>
 
         <button
-        onClick={
-          () => {
-            if (getCartCount() === 0) {
-              alert("Your cart is empty!");
-              return;
-            }
-            if (!selectedAddress) {
-              alert("Please select a delivery address.");
-              return;
-            }
-            if (paymentMethod === "Online") {
-              navigate("/payment");
-            } else {
-              navigate("/order-confirmation");
-            }
-        }
-        }
-         className="w-full py-3 mt-6 cursor-pointer bg-primary text-white font-medium hover:bg-primary transition">
+          onClick={placeOrder}
+          className="w-full py-3 mt-6 cursor-pointer bg-primary text-white font-medium hover:bg-primary transition">
           {
             paymentMethod === "COD"
               ? "Place Order (COD)"
