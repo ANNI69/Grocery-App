@@ -4,6 +4,7 @@ import { useAppContext } from "../Context/AppContext";
 import { assets, dummyAddress } from "../assets/assets";
 import toast from "react-hot-toast";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 const Cart = () => {
   const [showAddress, setShowAddress] = useState(false);
@@ -18,7 +19,9 @@ const Cart = () => {
     updateCartItem,
     asios,
     user,
-    setCart
+    setCart,
+    setUser,
+    setIsAuthenticated
   } = useAppContext();
 
   const [cartArray, setCartArray] = useState([]);
@@ -70,7 +73,7 @@ const Cart = () => {
 
         console.log('Order Data:', orderData); // Debug log
 
-        const { data } = await axios.post('/api/order/cod', orderData);
+        const { data } = await axios.post('/api/order/cod', orderData, { withCredentials: true });
 
         if (data.success) {
           toast.success(data.message);

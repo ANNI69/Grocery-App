@@ -1,10 +1,9 @@
 import { createContext, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
-import {dummyProducts} from "../assets/assets";
+// import {dummyProducts} from "../assets/assets"; // Remove dummyProducts
 import toast from "react-hot-toast";
 import axios from "axios";
-import Cookies from 'js-cookie';
 
 axios.defaults.withCredentials = true;
 axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL ;
@@ -16,12 +15,8 @@ export const AppContextProvider = ({ children }) => {
   const currency = import.meta.env.VITE_CURRENCY;
 
   const navigate = useNavigate();
-  const [user, setUser] = useState(() => {
-    // Initialize user state from cookie if available
-    const userData = Cookies.get('userData');
-    return userData ? JSON.parse(userData) : null;
-  });
-  const [isAuthenticated, setIsAuthenticated] = useState(!!user);
+  const [user, setUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -29,6 +24,21 @@ export const AppContextProvider = ({ children }) => {
   const [showUserLogin, setShowUserLogin] = useState(false);
   const [products, setProducts] = useState([]);
   const [isSeller, setIsSeller] = useState(false);
+
+  // Fetch user session from backend
+  const fetchUserSession = async () => {
+    setIsLoading(true);
+    try {
+      const res = await axios.get("/api/user/me");
+      setUser(res.data.user);
+      setIsAuthenticated(true);
+    } catch (err) {
+      setUser(null);
+      setIsAuthenticated(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const fetchSeller = async () => {
     try {
@@ -49,7 +59,15 @@ export const AppContextProvider = ({ children }) => {
   });
   const [searchQuery, setSearchQuery] = useState([]);
 
-  const fetchProducts = async () => {setProducts(dummyProducts);
+  // Fetch products from backend
+  const fetchProducts = async () => {
+    try {
+      const res = await axios.get("/api/product/list");
+      setProducts(res.data);
+    } catch (err) {
+      setProducts([]);
+      toast.error("Failed to fetch products");
+    }
   };
 
   const addToCart = (itemId) => {
@@ -115,18 +133,21 @@ export const AppContextProvider = ({ children }) => {
     return Math.round(total * 100) / 100; // Round to 2 decimal places
   }
 
-
-        
-  
-
   useEffect(() => {
     fetchSeller();
     fetchProducts();
+    fetchUserSession(); // Always check session on mount
   }, []);
+
+  // Update setUser to also update isAuthenticated
+  const setUserAndAuth = (userObj) => {
+    setUser(userObj);
+    setIsAuthenticated(!!userObj);
+  };
 
   const contextValue = {
     user,
-    setUser,
+    setUser: setUserAndAuth,
     isAuthenticated,
     setIsAuthenticated,
     isLoading,
@@ -153,6 +174,7 @@ export const AppContextProvider = ({ children }) => {
     isSeller,
     setIsSeller,
     axios,
+    fetchUserSession,
   };
 
   return (

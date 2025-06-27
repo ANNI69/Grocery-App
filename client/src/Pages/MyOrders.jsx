@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { useAppContext } from "../context/appContext";
-import { dummyOrders } from "../assets/assets";
+import { useAppContext } from "../Context/AppContext";
+import axios from "axios";
 
 const MyOrders = () => {
   const [myOrders, setMyOrders] = useState([]);
   const { currency } = useAppContext();
 
   const fetchMyOrders = async () => {
-    setMyOrders(dummyOrders);
+    try {
+      const { data } = await axios.get("/api/order/user", { withCredentials: true });
+      setMyOrders(data.orders || []);
+    } catch (err) {
+      setMyOrders([]);
+    }
   };
 
   useEffect(() => {
@@ -41,7 +46,7 @@ const MyOrders = () => {
                 <div className="bg-primary/10 p-4 rounded-lg">
                   <img
                     src={item.product.image[0]}
-                    alt={item.name}
+                    alt={item.product.name}
                     className="w-16 h-16"
                   />
                 </div>
@@ -54,13 +59,12 @@ const MyOrders = () => {
                 <p className="text-gray-500">Quantity: {item.quantity}</p>
                 <p className="text-gray-500">Staus: {order.status}</p>
                 <p className="text-gray-500">
-                  Date: {currency}{" "}
-                  {new Date(order.createdAt).toLocaleDateString()}
+                  Date: {new Date(order.createdAt).toLocaleDateString()}
                 </p>
               </div>
               <p>
                 <span className="text-primary text-lg font-medium">
-                  Amount:{" "}
+                  Amount: {" "}
                 </span>
                 {currency}{item.product.price * item.quantity}
               </p>

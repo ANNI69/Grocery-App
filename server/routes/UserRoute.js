@@ -1,20 +1,16 @@
 import express from "express";
-import { isAuth, login, logout, register } from "../controllers/UserController.js";
+import { me, login, logout, register } from "../controllers/UserController.js";
 import authUser from "../middleware/authUser.js";
 
 const userRouter = express.Router();
 
-// APi url: /api/user/register
+// Register
 userRouter.post("/register", register);
-
-// APi url: /api/user/login
+// Login
 userRouter.post("/login", login);
-
-// APi url: /api/user/isAuth
-userRouter.get("/isAuth", authUser, isAuth);
-
-// APi url: /api/user/logout
+// Get current user session
+userRouter.get("/me", authUser, me);
+// Logout
 userRouter.get("/logout", logout);
-
 
 export default userRouter;

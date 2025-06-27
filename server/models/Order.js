@@ -26,9 +26,9 @@ const orderSchema = new mongoose.Schema(
       required: true,
     },
     address: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Address",
       required: true,
-      ref: "address",
     },
     status: {
       type: String,

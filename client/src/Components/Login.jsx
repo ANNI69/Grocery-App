@@ -1,7 +1,6 @@
 import React from "react";
 import { useAppContext } from "../Context/AppContext";
 import axios from "axios";
-import Cookies from 'js-cookie';
 
 const Login = () => {
   const [state, setState] = React.useState("login");
@@ -10,40 +9,24 @@ const Login = () => {
   const [password, setPassword] = React.useState("");
   const [error, setError] = React.useState("");
 
-  const { setShowUserLogin, setUser, user } = useAppContext();
+  const { setShowUserLogin, fetchUserSession } = useAppContext();
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
     setError("");
-    
     try {
       const endpoint = state === "login" ? "/api/user/login" : "/api/user/register";
       const data = state === "login" ? { email, password } : { name, email, password };
-      
-      const response = await axios.post(endpoint, data, {
-        withCredentials: true // This is important for cookies
+      await axios.post(endpoint, data, {
+        withCredentials: true
       });
-
-      if (response.data.user) {
-        // Store user data in cookie
-        Cookies.set('userData', JSON.stringify(response.data.user), {
-          expires: 7, // Cookie expires in 7 days
-          secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-          sameSite: 'strict' // Prevent CSRF attacks
-        });
-
-        // Log how to access the cookie
-        // console.log('To access user data cookie in console, use:');
-        // console.log('Cookies.get("userData")');
-        // console.log('Current user data:', Cookies.get('userData'));
-
-        setUser(response.data.user);
-        setShowUserLogin(false);
-      }
+      // After login/register, fetch user session
+      await fetchUserSession();
+      setShowUserLogin(false);
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong");
     }
-  }
+  };
 
   return (
     <div onClick={()=>{setShowUserLogin(false)}} className="fixed top-0 left-0 bottom-0 right-0 z-30 flex items-center text-sm text-gray-700 bg-black/50">

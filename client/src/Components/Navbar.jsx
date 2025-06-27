@@ -3,7 +3,6 @@ import React, { useEffect, useState} from "react";
 import { NavLink } from "react-router-dom";
 import { assets } from "../assets/assets";
 import { useAppContext } from "../Context/AppContext";
-import Cookies from 'js-cookie';
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
@@ -16,12 +15,11 @@ const Navbar = () => {
     searchQuery,
     getCartTotalAmount,
     getCartCount,
+    logout,
   } = useAppContext();
 
-  const Logout = async () => {
-    // Remove user data from cookie
-    Cookies.remove('userData');
-    setUser(null);
+  const handleLogout = async () => {
+    await logout();
     setShowUserLogin(false);
     navigate("/");
   };
@@ -103,10 +101,7 @@ const Navbar = () => {
                   </li>
                   <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
                     <button
-                      onClick={() => {
-                        setUser(null);
-                        Logout();
-                      }}
+                      onClick={handleLogout}
                       className="w-full text-left"
                     >
                       Logout
@@ -167,9 +162,8 @@ const Navbar = () => {
             {user ? (
               <button
                 onClick={() => {
-                  setUser(null);
                   setOpen(false);
-                  Logout();
+                  handleLogout();
                 }}
                 className="cursor-pointer px-8 py-2 bg-primary hover:bg-primary-dull transition text-white rounded-full"
               >

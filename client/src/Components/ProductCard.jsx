@@ -4,7 +4,7 @@ import { assets } from "../assets/assets";
 import { useAppContext } from "../Context/AppContext";
 
 const Card = ({ product }) => {
-  const { setCount } = useState(0);
+  const [count, setCount] = useState(0);
   // eslint-disable-next-line no-unused-vars
   const { navigate, currency, cartItems, addToCart, removeFromCart, updateCartItem } =
     useAppContext();

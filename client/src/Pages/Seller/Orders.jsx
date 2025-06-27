@@ -1,13 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useAppContext } from "../../Context/AppContext";
-import { assets, dummyOrders } from "../../assets/assets";
+import axios from "axios";
+import { assets } from "../../assets/assets";
 
 const Orders = () => {
   const { currency } = useAppContext();
   const [order, setOrder] = useState([]);
 
   const fetchOrders = async () => {
-    setOrder(dummyOrders);
+    try {
+      const { data } = await axios.get("/api/order/all", { withCredentials: true });
+      setOrder(data.orders || []);
+    } catch (err) {
+      setOrder([]);
+    }
   };
 
   useEffect(() => {
@@ -43,21 +49,6 @@ const Orders = () => {
               </div>
             </div>
 
-            <div className="text-sm md:text-base text-black/60">
-              <p className="text-black/80">
-                {order.address.firstName} {order.address.lastName}
-              </p>
-              <p>
-                {order.address.street}, {order.address.city},{" "}
-              </p>
-              <p>
-                {order.address.state},{order.address.zipcode},{" "}
-                {order.address.country}
-              </p>
-              <p>
-                Phone: {order.address.phone}
-              </p>
-            </div>
 
             <p className="font-medium text-base my-auto text-black/70">
               {currency}{order.amount}

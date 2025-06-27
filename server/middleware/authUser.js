@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
+// Middleware to authenticate user via JWT in cookie or Authorization header
 const authUser = (req, res, next) => {
     const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
     if (!token) {
