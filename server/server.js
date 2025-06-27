@@ -23,7 +23,7 @@ await connectCloudinary();
 //Allowed Origins
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://your-frontend.vercel.app",
+  "https://grocery-stripe.vercel.app",
 ];
 
 // Middleware Configuration
