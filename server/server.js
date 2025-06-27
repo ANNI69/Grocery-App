@@ -40,8 +40,6 @@ app.use(cors({
   },
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "none",
 }));
 
 // Routes
