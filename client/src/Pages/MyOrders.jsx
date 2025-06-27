@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useAppContext } from "../Context/AppContext";
-import axios from "axios";
 
 const MyOrders = () => {
   const [myOrders, setMyOrders] = useState([]);
-  const { currency } = useAppContext();
+  const { currency,axios } = useAppContext();
 
   const fetchMyOrders = async () => {
     try {

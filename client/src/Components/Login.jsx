@@ -1,6 +1,5 @@
 import React from "react";
 import { useAppContext } from "../Context/AppContext";
-import axios from "axios";
 
 const Login = () => {
   const [state, setState] = React.useState("login");
@@ -9,7 +8,7 @@ const Login = () => {
   const [password, setPassword] = React.useState("");
   const [error, setError] = React.useState("");
 
-  const { setShowUserLogin, fetchUserSession } = useAppContext();
+  const { setShowUserLogin, axios ,fetchUserSession } = useAppContext();
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();

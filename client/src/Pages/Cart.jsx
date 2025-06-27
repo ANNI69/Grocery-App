@@ -3,8 +3,6 @@ import React, { useEffect, useState } from "react";
 import { useAppContext } from "../Context/AppContext";
 import { assets, dummyAddress } from "../assets/assets";
 import toast from "react-hot-toast";
-import axios from "axios";
-import Cookies from "js-cookie";
 
 const Cart = () => {
   const [showAddress, setShowAddress] = useState(false);
@@ -17,7 +15,7 @@ const Cart = () => {
     getCartCount,
     removeFromCart,
     updateCartItem,
-    asios,
+    axios,
     user,
     setCart,
     setUser,

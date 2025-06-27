@@ -9,7 +9,7 @@ userRouter.post("/register", register);
 // Login
 userRouter.post("/login", login);
 // Get current user session
-userRouter.get("/me", authUser, me);
+userRouter.get("/me", me);
 // Logout
 userRouter.get("/logout", logout);
 
