@@ -23,19 +23,26 @@ await connectCloudinary();
 //Allowed Origins
 const allowedOrigins = [
   "http://localhost:5173",
+  "https://your-frontend.vercel.app",
 ];
 
 // Middleware Configuration
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors(
-  {
-    origin: allowedOrigins,
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    credentials: true,
-  }
-))
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  credentials: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "none",
+}));
 
 // Routes
 app.use("/api/user", userRouter);
